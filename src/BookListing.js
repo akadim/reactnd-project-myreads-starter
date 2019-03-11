@@ -35,7 +35,7 @@ class BookListing extends Component {
               </div>
             </div>
             <div className="open-search">
-              <button onClick={() => this.setState({ showSearchPage: true })}>Add a book</button>
+              <Link to='/search'>Add a book</Link>
             </div>
           </div>
       );
