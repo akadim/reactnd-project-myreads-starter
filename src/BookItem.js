@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 
 
-class BookItem extends Component {
-    render()  {
-        const { book, onBookShelfChanged } = this.props;
+function BookItem (props) {
+    const { book, onBookShelfChanged } = props;
 
         return (
           <li key={book.id}>
@@ -11,7 +10,7 @@ class BookItem extends Component {
               <div className="book-top">
                   <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url(' + ((book.imageLinks !== undefined) ? book.imageLinks.smallThumbnail : '') + ')' }}></div>
                   <div className="book-shelf-changer">
-                  <select onChange={ (evt) => {onBookShelfChanged(book, evt.target.value)} } defaultValue={book.shelf}>
+                  <select onChange={ (evt) => {onBookShelfChanged(book, evt.target.value)} } defaultValue={book.shelf || 'none'}>
                       <option value="move" disabled>Move to...</option>
                       <option value="currentlyReading">Currently Reading</option>
                       <option value="wantToRead">Want to Read</option>
@@ -25,7 +24,6 @@ class BookItem extends Component {
               </div>
           </li>
       );
-    }
 }
 
 export default BookItem

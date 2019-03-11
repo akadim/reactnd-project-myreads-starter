@@ -20,7 +20,8 @@ class BooksApp extends React.Component {
      * users can use the browser's back and forward buttons to navigate between
      * pages, as well as provide a good URL they can bookmark and share.
      */
-    books: []
+    books: [],
+    searchBooks: []
   }
 
   componentDidMount() {
@@ -39,17 +40,38 @@ class BooksApp extends React.Component {
       });
   }
 
+  isBookExist = (book, listBooks) => {
+      for(let i=0; i < listBooks.length; i++) {
+          if(book.id === listBooks[i].id) {
+             return listBooks[i].shelf;
+          }
+      }
+
+      return null;
+  }
+
   searchBook = (query) => {
+       
        if(query !== null && query !== '') {
+         let booksWithShelf = this.state.books;
           BooksAPI.search(query).then( (resultBooks) => {
                 if(resultBooks.length > 0) {
-                    this.setState({ books: resultBooks })
+                    resultBooks.map( (resultBook) => {
+                        if(this.isBookExist(resultBook, this.state.books) !== null) {
+                            resultBook.shelf = this.isBookExist(resultBook, this.state.books);
+                        }
+                        else {
+                            resultBook.shelf = 'none';
+                        }
+                    });
+
+                    this.setState({ searchBooks: resultBooks })
                 } else {
-                    this.setState({ books: [] });
+                    this.setState({ searchBooks: [] });
                 }
           });
        } else  {
-        this.setState({ books: [] });
+        this.setState({ searchBooks: [] });
        }
   }
 
@@ -58,7 +80,7 @@ class BooksApp extends React.Component {
       
       <div className="app">
        <Route path='/search' render={ ({history}) => (
-          <SearchBook  books={this.state.books} onBookShelfChanged={this.changeBookShelf} onSearchTriggered={this.searchBook}/>
+          <SearchBook  books={this.state.searchBooks} onBookShelfChanged={this.changeBookShelf} onSearchTriggered={this.searchBook}/>
         ) }/>
         <Route exact path='/' render={ () => (
             <BookListing shelves={this.shelves} books={this.state.books} onBookShelfChanged={this.changeBookShelf}></BookListing>
