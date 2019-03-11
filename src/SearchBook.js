@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import BookItem from './BookItem'
+import * as BooksAPI from './BooksAPI'
 import escapeRegExp from 'escape-string-regexp'
 
 class SearchBook extends Component {
@@ -11,10 +12,10 @@ class SearchBook extends Component {
 
     updateQuery = (query) => {
         this.setState({ query: query})
+        this.props.onSearchTriggered(this.state.query);
     }
 
     onBookShelfChanged = (book, shelf) => {
-        console.log(this.props);
         this.props.onBookShelfChanged(book, shelf);
     }
 
@@ -22,15 +23,6 @@ class SearchBook extends Component {
 
         const { books, onBookShelfChanged } = this.props;
         const { query } = this.state;
-
-        let showinBooks
-
-        if(query) {
-            const match = new RegExp(escapeRegExp(query), 'i');
-            showinBooks = books.filter((book) => match.test(book.title) || match.test(book.authors.join(', ')));
-        } else {
-            showinBooks = [];
-        }
 
         return (
             <div className="search-books">
@@ -51,7 +43,7 @@ class SearchBook extends Component {
                 </div>
                 <div className="search-books-results">
                     <ol className="books-grid">
-                    { showinBooks.map( (book) => (
+                    { query !== '' &&  books.map( (book) => (
                         <BookItem book={book} onBookShelfChanged={this.onBookShelfChanged } key={book.id}/>
                     ))}
                     </ol>
